@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+  </head>
+  <body>
+    <script src="./Listening.js" charset="utf-8"></script>
+    <script type="text/javascript" style="font-family: Courier, 'New Courier', monospace; white-space: pre-wrap; display: inline; word-wrap: break-word;">
+      var abc = new EObject({a: 1, b: 2});
+      console.table(abc);
+      var def = new EObject({c: 3, d: 4});
+      console.table(def);
+      var firstHitEvent = abc.__addEventListener__('hit', function(e, src){
+        this.parent.a += e.a;
+        console.log(src);
+      });
+      console.log(abc.__events__);
+      def.__fireEvent__(abc, 'hit', {
+      	a: 20
+      });
+      console.table(abc);
+      abc.__removeEventListener__('hit', firstHitEvent);
+      console.log(abc.__events__);
+      var abcMouseMove = abc.__addEventListener__('mousemove', function(e){
+        this.parent.a = e.clientX;
+        this.parent.b = e.clientY;
+      });
+      var defMouseMove = def.__addDOMEventListener__('mousemove', function(e){
+        def.__fireEvent__(abc, 'mousemove', e);
+        if(abc.a < 20){
+          abc.__removeEventListener__('mousemove', abcMouseMove);
+          def.__removeDOMEventListener__('mousemove', defMouseMove);
+        }
+      });
+    </script>
+  </body>
+</html>
